@@ -11,13 +11,14 @@ use crate::{
 pub struct Rofi {
     line_length: usize,
     menu_length: usize,
+    menu_prompt: String,
 }
 
 impl Rofi {
     pub fn from_config(config: &config::Rofi) -> Rofi {
-        let config::Rofi { menu_length, line_length } = *config;
+        let config::Rofi { menu_length, line_length, menu_prompt } = &*config;
 
-        Rofi { menu_length, line_length }
+        Rofi { menu_length: *menu_length, line_length: *line_length, menu_prompt: menu_prompt.to_string() }
     }
 }
 
@@ -34,6 +35,8 @@ impl ExternalProgram for Rofi {
                 ENTRY_SEPARATOR.to_owned(),
                 "-format".to_owned(),
                 "i".to_owned(),
+                "-p".to_owned(),
+                self.menu_prompt.to_string(),
             ],
             SelectionMode::Multiple => vec![
                 "-dmenu".to_owned(),
@@ -44,6 +47,8 @@ impl ExternalProgram for Rofi {
                 ENTRY_SEPARATOR.to_owned(),
                 "-format".to_owned(),
                 "i".to_owned(),
+                "-p".to_owned(),
+                self.menu_prompt.to_string(),
             ],
         }
     }
